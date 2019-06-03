@@ -1,34 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO.Abstractions;
+using AutoMapper;
+using BlackSlope.Api.Common.Configurtion;
+using BlackSlope.Api.Common.Extensions;
+using BlackSlope.Api.Common.Middleware.Corellation;
+using BlackSlope.Api.Common.Middleware.ExceptionHandling;
+using BlackSlope.Api.Common.Version.Interfaces;
+using BlackSlope.Api.Common.Version.Services;
+using BlackSlope.Api.Operations.Movies.Validators.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace BlackSlope.Api
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+        private HostConfig HostConfig { get; set; }
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvcService();
+            ApplicationConfiguration(services);
+
+            services.AddSwagger(HostConfig.Swagger);
+            CorsConfiguration(services);
+            AuthenticationConfiguration(services);
+
+            services.AddSingleton(GenerateMapperConfiguration());
+            services.AddTransient<ICorrelationIdRequestReader, CorrelationIdHeaderService>();
+            services.AddTransient<ICorrelationIdResponseWriter, CorrelationIdHeaderService>();
+            services.AddScoped<ICurrentCorrelationIdService, CurrentCorrelationIdService>();
+            services.AddTransient<IFileSystem, FileSystem>();
+            services.AddTransient<IVersionService, AssemblyVersionService>();
+
+            services.AddMovieService(_configuration);
+            services.AddMovieValidators();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public static IMapper GenerateMapperConfiguration()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfiles("BlackSlope.Api");
+            });
+            return config.CreateMapper();
+        }
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -42,7 +67,46 @@ namespace BlackSlope.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware(typeof(CorrelationIdMiddleware));
+            app.UseSwagger(HostConfig.Swagger);
+            app.UseCors("AllowSpecificOrigin");
+            app.UseAuthentication();
+            app.UseMiddleware(typeof(ExceptionHandlingMiddleware));
             app.UseMvc();
+        }
+
+        private void ApplicationConfiguration(IServiceCollection services)
+        {
+            services.AddSingleton(_ => _configuration);
+            services.AddSingleton(_configuration.GetSection("BlackSlope.Api.Configuration").Get<HostConfig>());
+
+            var serviceProvider = services.BuildServiceProvider();
+            HostConfig = serviceProvider.GetService<HostConfig>();
+        }
+
+        private void CorsConfiguration(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.AllowAnyOrigin()     // TODO: Replace with FE Service Host as appropriate to constrain clients
+                        .AllowAnyHeader()
+                        .WithMethods("PUT", "POST", "OPTIONS", "GET", "DELETE"));
+            });
+        }
+
+        private void AuthenticationConfiguration(IServiceCollection services)
+        {
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.Authority = string.Format(HostConfig.AzureAd.AadInstance, HostConfig.AzureAd.Tenant);
+                options.Audience = HostConfig.AzureAd.Audience;
+            });
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AutoMapper;
-using BlackSlope.Hosts.Api;
+using BlackSlope.Api;
 using BlackSlope.Repositories.MovieRepository;
 using BlackSlope.Repositories.MovieRepository.DtoModels;
 using BlackSlope.Services.MovieService;

@@ -1,11 +1,11 @@
 ﻿using System;
 using AutoFixture;
-using BlackSlope.Hosts.Api.Operations.Movies.ViewModels;
-using BlackSlope.Hosts.Api.Operations.Movies.Validators;
+using BlackSlope.Api.Operations.Movies.ViewModels;
+using BlackSlope.Api.Operations.Movies.Validators;
 using Xunit;
 using FluentValidation.TestHelper;
 
-namespace Blackslope.Hosts.Api.Tests
+namespace BlackSlope.Api.Tests
 {
     public class CreateMovieRequestViewModelValidatorTests : IDisposable
     {

@@ -1,8 +1,7 @@
 # Build the application
 FROM microsoft/dotnet:2.2-sdk AS build
-WORKDIR /src
-COPY ./src .
-WORKDIR /src/BlackSlope.Api
+COPY . .
+WORKDIR /BlackSlope.Api
 RUN dotnet restore
 RUN dotnet publish --no-restore -c Release -o /app
 

@@ -1,0 +1,19 @@
+version: '3'
+services: 
+  db: 
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+    container_name: db
+    ports: 
+      - "1401:1433"
+  apiapp:
+    image: balckslope/api-app
+    build: 
+      context: .
+    depends_on:
+      - db
+    ports: 
+      - "80:80"

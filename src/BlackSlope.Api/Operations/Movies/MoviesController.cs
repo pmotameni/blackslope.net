@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using BlackSlope.Api.Common.Controllers;
 using BlackSlope.Api.Operations.Movies.Requests;
@@ -105,10 +106,10 @@ namespace BlackSlope.Api.Operations.Movies
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost]
         [Route("api/v1/movies")]
-        public ActionResult<CreateMovieResponse> Post([FromBody] CreateMovieRequest request)
+        public async Task<ActionResult<CreateMovieResponse>> Post([FromBody] CreateMovieRequest request)
         {
             // validate request model           
-            _createMovieRequestValidator.Validate(request);
+            await _createMovieRequestValidator.ValidateAsync(request);
 
             // map view model to domain model
             var movie = _mapper.Map<MovieDomainModel>(request.Movie);

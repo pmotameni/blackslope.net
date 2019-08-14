@@ -28,9 +28,9 @@ namespace BlackSlope.Api
         {
             services.AddMvcService();
             ApplicationConfiguration(services);
+            CorsConfiguration(services);
 
             services.AddSwagger(HostConfig.Swagger);
-            CorsConfiguration(services);
             services.AddAzureAd(HostConfig.AzureAd);
             services.AddAutoMapper();
             services.AddCorrelation();
@@ -39,6 +39,7 @@ namespace BlackSlope.Api
             services.AddMovieService();
             services.AddMovieRepository(_configuration);
             services.AddMovieValidators();
+            services.AddHealthChecksService();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -52,14 +53,14 @@ namespace BlackSlope.Api
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseHealthChecks("/health");
             app.UseHttpsRedirection();
 
-            app.UseMiddleware(typeof(CorrelationIdMiddleware));
             app.UseSwagger(HostConfig.Swagger);
             app.UseCors("AllowSpecificOrigin");
             app.UseAuthentication();
-            app.UseMiddleware(typeof(ExceptionHandlingMiddleware));
+            app.UseMiddleware<CorrelationIdMiddleware>();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseMvc();
         }
 

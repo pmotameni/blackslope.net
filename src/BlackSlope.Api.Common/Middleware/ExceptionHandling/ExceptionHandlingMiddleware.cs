@@ -1,24 +1,25 @@
-﻿using BlackSlope.Api.Common.ViewModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BlackSlope.Api.Common.Enumerators;
+using BlackSlope.Api.Common.Extensions;
+using BlackSlope.Api.Common.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using BlackSlope.Api.Common.Extensions;
-using BlackSlope.Api.Common.Enumerators;
 
 namespace BlackSlope.Api.Common.Middleware.ExceptionHandling
 {
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
             this.next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -33,11 +34,10 @@ namespace BlackSlope.Api.Common.Middleware.ExceptionHandling
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            var response = "";
             var statusCode = ApiHttpStatusCode.InternalServerError;
-
+            string response;
             if (exception is ApiException)
             {
                 var apiException = exception as ApiException;
@@ -56,13 +56,13 @@ namespace BlackSlope.Api.Common.Middleware.ExceptionHandling
             {
                 var apiErrors = new List<ApiError>
                 {
-                    PrepareApiError((int)statusCode, statusCode.Description())
+                    PrepareApiError((int)statusCode, statusCode.GetDescription())
                 };
                 var apiResponse = PrepareResponse(null, apiErrors);
                 response = Serialize(apiResponse);
             }
 
-            Log.Error(exception, response);
+            _logger.LogError(exception, response);
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;

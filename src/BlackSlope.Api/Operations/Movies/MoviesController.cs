@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using BlackSlope.Api.Common.Controllers;
 using BlackSlope.Api.Operations.Movies.Requests;
 using BlackSlope.Api.Operations.Movies.Responses;
 using BlackSlope.Api.Operations.Movies.Validators.Interfaces;
 using BlackSlope.Api.Operations.Movies.ViewModels;
-using BlackSlope.Services.MovieService;
-using BlackSlope.Services.MovieService.DomainModels;
-using Microsoft.AspNetCore.Authorization;
+using BlackSlope.Services.Movies;
+using BlackSlope.Services.Movies.DomainModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlackSlope.Api.Operations.Movies
-{    
-    // todo: enable this once authentication middleware has been configured
+{
+    // TODO: enable this once authentication middleware has been configured
     //[Authorize]
     public class MoviesController : BaseController
     {
@@ -21,7 +21,6 @@ namespace BlackSlope.Api.Operations.Movies
         private readonly IMovieService _movieService;
         private readonly ICreateMovieRequestValidator _createMovieRequestValidator;
         private readonly IUpdateMovieRequestValidator _updateMovieRequestValidator;
-
 
         public MoviesController(IMovieService movieService, IMapper mapper, ICreateMovieRequestValidator createMovieRequestValidator, IUpdateMovieRequestValidator updateMovieRequestValidator)
         {
@@ -45,16 +44,13 @@ namespace BlackSlope.Api.Operations.Movies
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
         [Route("api/v1/movies")]
-        public ActionResult<GetMoviesResponse> Get()
+        public async Task<ActionResult<List<MovieViewModel>>> Get()
         {
             // get all movies form service
-            var movies = _movieService.GetAllMovies();
+            var movies = await _movieService.GetAllMoviesAsync();
 
             // prepare response
-            var response = new GetMoviesResponse
-            {
-                Movies = _mapper.Map<List<MovieResponseViewModel>>(movies)
-            };
+            var response = _mapper.Map<List<MovieViewModel>>(movies);
 
             // 200 response
             return HandleSuccessResponse(response);
@@ -74,16 +70,13 @@ namespace BlackSlope.Api.Operations.Movies
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
         [Route("api/v1/movies/{id}")]
-        public ActionResult<GetMovieResponse> Get(int id)
+        public async Task<ActionResult<MovieViewModel>> Get(int id)
         {
             // get all movies form service
-            var movie = _movieService.GetMovie(id);
+            var movie = await _movieService.GetMovieAsync(id);
 
             // prepare response
-            var response = new GetMovieResponse
-            {
-                Movie = _mapper.Map<MovieResponseViewModel>(movie)
-            };
+            var response = _mapper.Map<MovieViewModel>(movie);
 
             // 200 response
             return HandleSuccessResponse(response);
@@ -105,22 +98,21 @@ namespace BlackSlope.Api.Operations.Movies
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost]
         [Route("api/v1/movies")]
-        public ActionResult<CreateMovieResponse> Post([FromBody] CreateMovieRequest request)
+        public async Task<ActionResult<MovieViewModel>> Post([FromBody] CreateMovieViewModel viewModel)
         {
+            var request = new CreateMovieRequest { Movie = viewModel };
+
             // validate request model           
-            _createMovieRequestValidator.Validate(request);
+            await _createMovieRequestValidator.ValidateAsync(request);
 
             // map view model to domain model
-            var movie = _mapper.Map<MovieDomainModel>(request.Movie);
+            var movie = _mapper.Map<MovieDomainModel>(viewModel);
 
             // create new movie
-            var createdMovie = _movieService.CreateMovie(movie);
+            var createdMovie = await _movieService.CreateMovieAsync(movie);
 
             // prepare response
-            var response = new CreateMovieResponse
-            {
-                Movie = _mapper.Map<MovieResponseViewModel>(createdMovie)
-            };
+            var response = _mapper.Map<MovieViewModel>(createdMovie);
 
             // 201 response
             return HandleCreatedResponse(response);
@@ -141,23 +133,24 @@ namespace BlackSlope.Api.Operations.Movies
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut]
-        [Route("api/v1/movies")]
-        public ActionResult<UpdateMovieResponse> Put([FromBody] UpdateMovieRequest request)
+        [Route("api/v1/movies/{id}")]
+        public async Task<ActionResult<MovieViewModel>> Put(int? id, [FromBody] MovieViewModel viewModel)
         {
-            // validate request model           
+            var request = new UpdateMovieRequest { Movie = viewModel, Id = id };
+
             _updateMovieRequestValidator.Validate(request);
 
+            // id can be in URL, body, or both
+            viewModel.Id = id ?? viewModel.Id;
+
             // map view model to domain model
-            var movie = _mapper.Map<MovieDomainModel>(request.Movie);
+            var movie = _mapper.Map<MovieDomainModel>(viewModel);
 
             // update existing movie
-            var updatedMovie = _movieService.UpdateMovie(movie);
+            var updatedMovie = await _movieService.UpdateMovieAsync(movie);
 
             // prepare response
-            var response = new UpdateMovieResponse
-            {
-                Movie = _mapper.Map<MovieResponseViewModel>(updatedMovie)
-            };
+            var response = _mapper.Map<MovieViewModel>(updatedMovie);
 
             // 200 response
             return HandleSuccessResponse(response);
@@ -180,19 +173,13 @@ namespace BlackSlope.Api.Operations.Movies
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete]
         [Route("api/v1/movies/{id}")]
-        public ActionResult<DeletedMovieResponse> Delete(int id)
+        public async Task<ActionResult<DeletedMovieResponse>> Delete(int id)
         {
             // delete existing movie
-            var deletedMovieId = _movieService.DeleteMovie(id);
+            await _movieService.DeleteMovieAsync(id);
 
-            // prepare response
-            var response = new DeletedMovieResponse
-            {
-                DeletedMovieId = deletedMovieId
-            };
-
-            // 200 response
-            return HandleSuccessResponse(response);
+            // 204 response
+            return HandleDeletedResponse();
         }
     }
 }

@@ -5,6 +5,9 @@ using FluentValidation.Results;
 using BlackSlope.Api.Common.ViewModels;
 using BlackSlope.Api.Common.Enumerators;
 using FluentValidation.Internal;
+using System.Threading.Tasks;
+using System.Threading;
+using BlackSlope.Api.Common.Extensions;
 
 namespace BlackSlope.Api.Common.Validators
 {
@@ -13,6 +16,12 @@ namespace BlackSlope.Api.Common.Validators
         public new void Validate(T instance)
         {
             var validationResult = base.Validate(instance);
+            HandleValidationFailure(validationResult, instance);
+        }
+
+        public new async Task ValidateAsync(T instance, CancellationToken cancellation = default)
+        {
+            var validationResult = await base.ValidateAsync(instance);
             HandleValidationFailure(validationResult, instance);
         }
 
@@ -37,9 +46,11 @@ namespace BlackSlope.Api.Common.Validators
         private static ApiError CreateApiError(ValidationFailure validationFailure)
         {
             int errorCode;
+            string message = null;
             if (validationFailure.CustomState is Enum)
             {
                 errorCode = (int)validationFailure.CustomState;
+                message = ((Enum) validationFailure.CustomState).GetDescription();
             }
             else
             {
@@ -49,7 +60,9 @@ namespace BlackSlope.Api.Common.Validators
             return new ApiError
             {
                 Code = errorCode,
-                Message = validationFailure.ErrorMessage
+                Message = string.IsNullOrEmpty(message)
+                    ? validationFailure.ErrorMessage
+                    : message,
             };
         }
     }

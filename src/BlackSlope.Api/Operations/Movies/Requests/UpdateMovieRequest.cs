@@ -4,6 +4,7 @@ namespace BlackSlope.Api.Operations.Movies.Requests
 {
     public class UpdateMovieRequest
     {
-        public UpdateMovieRequestViewModel Movie { get; set; }
+        public int? Id { get; set; }
+        public MovieViewModel Movie { get; set; }
     }
 }

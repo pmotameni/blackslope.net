@@ -11,18 +11,12 @@ namespace BlackSlope.Api.Common.Controllers
     {
         protected ActionResult HandleSuccessResponse(object data, HttpStatusCode status = HttpStatusCode.OK)
         {
-            return StatusCode((int)status, new ApiResponse
-            {
-                Data = data
-            });
+            return StatusCode((int)status, data);
         }
 
         protected ActionResult HandleCreatedResponse(object data, HttpStatusCode status = HttpStatusCode.Created)
         {
-            return StatusCode((int)status, new ApiResponse
-            {
-                Data = data
-            });
+            return StatusCode((int)status, data);
         }
 
         protected ActionResult HandleErrorResponse(HttpStatusCode httpStatus, string message)
@@ -37,6 +31,11 @@ namespace BlackSlope.Api.Common.Controllers
                 }
             };
             return StatusCode((int)httpStatus, response);
+        }
+
+        protected ActionResult HandleDeletedResponse()
+        {
+            return StatusCode((int)HttpStatusCode.NoContent);
         }
 
     }

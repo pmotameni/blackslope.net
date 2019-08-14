@@ -1,12 +1,11 @@
 ﻿using System.IO.Abstractions;
-using AutoMapper;
+using System.Reflection;
 using BlackSlope.Api.Common.Configurtion;
 using BlackSlope.Api.Common.Extensions;
-using BlackSlope.Api.Common.Middleware.Corellation;
+using BlackSlope.Api.Common.Middleware.Correlation;
 using BlackSlope.Api.Common.Middleware.ExceptionHandling;
 using BlackSlope.Api.Common.Version.Interfaces;
 using BlackSlope.Api.Common.Version.Services;
-using BlackSlope.Api.Operations.Movies.Validators.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,26 +31,14 @@ namespace BlackSlope.Api
 
             services.AddSwagger(HostConfig.Swagger);
             CorsConfiguration(services);
-            AuthenticationConfiguration(services);
-
-            services.AddSingleton(GenerateMapperConfiguration());
-            services.AddTransient<ICorrelationIdRequestReader, CorrelationIdHeaderService>();
-            services.AddTransient<ICorrelationIdResponseWriter, CorrelationIdHeaderService>();
-            services.AddScoped<ICurrentCorrelationIdService, CurrentCorrelationIdService>();
+            services.AddAzureAd(HostConfig.AzureAd);
+            services.AddAutoMapper();
+            services.AddCorrelation();
             services.AddTransient<IFileSystem, FileSystem>();
             services.AddTransient<IVersionService, AssemblyVersionService>();
-
-            services.AddMovieService(_configuration);
+            services.AddMovieService();
+            services.AddMovieRepository(_configuration);
             services.AddMovieValidators();
-        }
-
-        public static IMapper GenerateMapperConfiguration()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfiles("BlackSlope.Api");
-            });
-            return config.CreateMapper();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -79,7 +66,7 @@ namespace BlackSlope.Api
         private void ApplicationConfiguration(IServiceCollection services)
         {
             services.AddSingleton(_ => _configuration);
-            services.AddSingleton(_configuration.GetSection("BlackSlope.Api.Configuration").Get<HostConfig>());
+            services.AddSingleton(_configuration.GetSection(Assembly.GetExecutingAssembly().GetName().Name).Get<HostConfig>());
 
             var serviceProvider = services.BuildServiceProvider();
             HostConfig = serviceProvider.GetService<HostConfig>();

@@ -4,6 +4,6 @@ namespace BlackSlope.Api.Operations.Movies.Requests
 {
     public class CreateMovieRequest
     {
-        public CreateMovieRequestViewModel Movie { get; set; }
+        public CreateMovieViewModel Movie { get; set; }
     }
 }

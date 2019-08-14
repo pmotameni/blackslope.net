@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BlackSlope.Api.Operations.Movies.ViewModels;
-using BlackSlope.Services.MovieService.DomainModels;
+using BlackSlope.Services.Movies.DomainModels;
 
 namespace BlackSlope.Api.Operations.Movies.MapperProfiles
 {
@@ -8,7 +8,7 @@ namespace BlackSlope.Api.Operations.Movies.MapperProfiles
     {
         public UpdateMovieRequestProfile()
         {
-            CreateMap<UpdateMovieRequestViewModel, MovieDomainModel>().ReverseMap();
+            CreateMap<UpdateMovieViewModel, MovieDomainModel>().ReverseMap();
         }
     }
 }

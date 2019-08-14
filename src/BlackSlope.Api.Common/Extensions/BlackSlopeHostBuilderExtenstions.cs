@@ -1,4 +1,5 @@
-﻿using BlackSlope.Api.Common.Configurtion;
+﻿using System;
+using BlackSlope.Api.Common.Configurtion;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,23 +11,20 @@ namespace BlackSlope.Api.Common.Extensions
 {
     public static class BlackSlopeHostBuilderExtenstions
     {
-        public static IWebHostBuilder UseSerilog(this IWebHostBuilder webHostBuilder, string appSettingsSection)
-        {
-            return webHostBuilder.UseSerilog(
-                 (ctx, config) =>
-                 {
-                     var appSettings = ctx.Configuration.GetSection(appSettingsSection).Get<HostConfig>();
-                     var serilogConfig = appSettings.Serilog;
+        public static IWebHostBuilder UseSerilog(this IWebHostBuilder webHostBuilder, string appSettingsSection) =>
+             webHostBuilder.UseSerilog((ctx, config) =>
+                {
+                    var appSettings = ctx.Configuration.GetSection(appSettingsSection).Get<HostConfig>();
+                    var serilogConfig = appSettings.Serilog;
 
-                     // If they follow conventions for Serilog in config it will be read here.
-                     config.ReadFrom.Configuration(ctx.Configuration);
+                    // If they follow conventions for Serilog in config it will be read here.
+                    config.ReadFrom.Configuration(ctx.Configuration);
 
-                     SetLogLevel(config, serilogConfig);
-                     LogToFile(config, serilogConfig);
-                     LogToConsole(config, serilogConfig);
-                     LogToApplicationInsights(config, appSettings, serilogConfig);
-                 });
-        }
+                    SetLogLevel(config, serilogConfig);
+                    LogToFile(config, serilogConfig);
+                    LogToConsole(config, serilogConfig);
+                    LogToApplicationInsights(config, appSettings, serilogConfig);
+                });
 
         private static void LogToApplicationInsights(LoggerConfiguration config, HostConfig appSettings, SerilogConfig serilogConfig)
         {
@@ -36,8 +34,6 @@ namespace BlackSlope.Api.Common.Extensions
                 // Note: best practice is to use the existing Telemetry 
                 if (string.IsNullOrEmpty(TelemetryConfiguration.Active.InstrumentationKey))
                 {
-                    // TODO get the instrumentation key from the config file
-                    // webHostBuilder.UseApplicationInsights("ba3d25ea-5b60-4d5d-9340-06326585e663");
                     config.WriteTo.ApplicationInsights(appSettings.ApplicationInsights.InstrumentationKey, TelemetryConverter.Traces);
                     config.WriteTo.ApplicationInsights(appSettings.ApplicationInsights.InstrumentationKey, TelemetryConverter.Events);
                 }
@@ -68,10 +64,10 @@ namespace BlackSlope.Api.Common.Extensions
 
         private static void SetLogLevel(LoggerConfiguration config, SerilogConfig serilogConfig)
         {
-            // TODO add check to skip this if the minimum level is not defined
+            Enum.TryParse<LogEventLevel>(serilogConfig.MinimumLevel, true, out var minimumLevel);
             var levelSwitch = new LoggingLevelSwitch
             {
-                MinimumLevel = (LogEventLevel)serilogConfig.MinimumLevel
+                MinimumLevel = minimumLevel,
             };
 
             config.MinimumLevel.ControlledBy(levelSwitch);

@@ -5,7 +5,7 @@ namespace BlackSlope.Api.Operations.Movies.Enumerators
     public enum MovieErrorCode
     {
         [Description("Request model cannot be null")]
-        NullRequestModel = 40001,
+        NullRequestViewModel = 40001,
 
         [Description("Movie Id cannot be null or empty")]
         EmptyOrNullMovieId = 40002,
@@ -20,7 +20,12 @@ namespace BlackSlope.Api.Operations.Movies.Enumerators
         TitleNotBetween2and50Characters = 40005,
 
         [Description("Movie Description should be between 2 and 50 characters")]
-        DescriptionNotBetween2and50Characters = 40006
+        DescriptionNotBetween2and50Characters = 40006,
 
+        [Description("Movie already exists")]
+        MovieAlreadyExists = 40007,
+
+        [Description("Id in URL does not match with id in body")]
+        IdConflict = 40901,
     }
 }

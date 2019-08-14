@@ -1,4 +1,4 @@
 cd ../src
 docker-compose up -d
-cd ..
+cd ../scripts
 ./db-update.sh

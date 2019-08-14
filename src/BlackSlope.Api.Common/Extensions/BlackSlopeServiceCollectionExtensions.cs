@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using AutoMapper;
 using BlackSlope.Api.Common.Configurtion;
+using BlackSlope.Api.Common.Swagger;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     Name = "Authorization",
                     Type = "apiKey"
                 });
-
+                c.DocumentFilter<DocumentFilterAddHealth>();
                 c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                 {
                     { "Bearer", new string[] { } }
@@ -50,16 +51,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IMvcBuilder AddMvcService(this IServiceCollection services)
-        {
-            return services.AddMvc()
+        public static IMvcBuilder AddMvcService(this IServiceCollection services) =>
+            services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
-        }
 
         /// <summary>
         /// Add Azure service to the Service Collection and configure it

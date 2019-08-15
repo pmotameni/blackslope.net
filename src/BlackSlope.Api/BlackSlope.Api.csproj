@@ -34,7 +34,6 @@
 
   <ItemGroup>
     <Folder Include="Operations\Movies\Requests\" />
-    <Folder Include="Repositories\Movies\Migrations\" />
   </ItemGroup>
 
 </Project>

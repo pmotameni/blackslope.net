@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlackSlope.Api.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    [Migration("20190723152950_AddReleaseDateToMovieModel")]
-    partial class AddReleaseDateToMovieModel
+    [Migration("20190814225910_seeded")]
+    partial class seeded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

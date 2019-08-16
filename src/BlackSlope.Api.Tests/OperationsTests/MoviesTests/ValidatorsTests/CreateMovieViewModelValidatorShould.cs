@@ -39,14 +39,14 @@ namespace BlackSlope.Api.Tests.OperationsTests.MoviesTests.ValidatorsTests
         public void Fail_when_title_is_not_between_2_and_50_characters()
         {
             _modelViewModel.Title = "2";
-            _movieViewModelValidator.ShouldHaveValidationErrorFor(x => x.Title, _modelViewModel);
+            _movieViewModelValidator.ShouldHaveValidationErrorFor(x => x.Title.Length, _modelViewModel);
         }
 
         [Fact]
         public void Fail_when_description_is_not_between_2_and_50_characters()
         {
             _modelViewModel.Description = "d";
-            _movieViewModelValidator.ShouldHaveValidationErrorFor(x => x.Description, _modelViewModel);
+            _movieViewModelValidator.ShouldHaveValidationErrorFor(x => x.Description.Length, _modelViewModel);
         }
 
         [Fact]

@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.TryAddScoped<IMovieRepository, MovieRepository>();
 
-            var config = configuration.GetSection(Assembly.GetExecutingAssembly().GetName().Name)
+            var config = configuration?.GetSection(Assembly.GetExecutingAssembly().GetName().Name)
                 .Get<MovieRepositoryConfiguration>();
             services.TryAddSingleton<IMovieRepositoryConfiguration>(config);
 

@@ -7,7 +7,7 @@ using FluentValidation;
 
 namespace BlackSlope.Api.Operations.Movies.Validators
 {
-    public class CreateMovieRequestValidatorCollection : BlackslopeValidator<CreateMovieRequest>, ICreateMovieRequestValidator
+    public class CreateMovieRequestValidatorCollection : BlackslopeValidator<CreateMovieRequest>, ICreateMovieRequestValidatorCollection
     {
 
         public CreateMovieRequestValidatorCollection(IMovieService movieService)

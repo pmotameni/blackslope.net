@@ -46,8 +46,8 @@ namespace BlackSlope.Repositories.Movies
         public async Task<MovieDtoModel> UpdateAsync(MovieDtoModel movie)
         {
             var dto = await _context.Movies.FirstOrDefaultAsync(x => x.Id == movie.Id);
-            dto.Title = movie.Title;
-            dto.Description = movie.Description;
+            dto.Title = movie?.Title;
+            dto.Description = movie?.Description;
             await _context.SaveChangesAsync();
 
             return movie;

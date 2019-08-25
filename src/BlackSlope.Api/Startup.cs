@@ -74,7 +74,7 @@ namespace BlackSlope.Api
             HostConfig = serviceProvider.GetService<HostConfig>();
         }
 
-        private void CorsConfiguration(IServiceCollection services)
+        private static void CorsConfiguration(IServiceCollection services)
         {
             services.AddCors(options =>
             {

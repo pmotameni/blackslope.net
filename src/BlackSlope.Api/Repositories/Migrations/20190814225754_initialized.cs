@@ -8,7 +8,7 @@ namespace BlackSlope.Api.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            migrationBuilder?.CreateTable(
                 name: "Movies",
                 columns: table => new
                 {
@@ -23,7 +23,7 @@ namespace BlackSlope.Api.Migrations
                     table.PrimaryKey("PK_Movies", x => x.Id);
                 });
 
-            migrationBuilder.CreateIndex(
+            migrationBuilder?.CreateIndex(
                 name: "IX_Movies_Title",
                 table: "Movies",
                 column: "Title");
@@ -31,7 +31,7 @@ namespace BlackSlope.Api.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            migrationBuilder?.DropTable(
                 name: "Movies");
         }
     }

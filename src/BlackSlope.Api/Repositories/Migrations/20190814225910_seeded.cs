@@ -7,7 +7,7 @@ namespace BlackSlope.Api.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.InsertData(
+            migrationBuilder?.InsertData(
                 table: "Movies",
                 columns: new[] { "Id", "Description", "ReleaseDate", "Title" },
                 values: new object[,]
@@ -67,6 +67,10 @@ namespace BlackSlope.Api.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            if (migrationBuilder == null)
+            {
+                return;
+            }
             migrationBuilder.DeleteData(
                 table: "Movies",
                 keyColumn: "Id",

@@ -19,10 +19,10 @@ namespace BlackSlope.Api.Operations.Movies
     {
         private readonly IMapper _mapper;
         private readonly IMovieService _movieService;
-        private readonly ICreateMovieRequestValidator _createMovieRequestValidator;
-        private readonly IUpdateMovieRequestValidator _updateMovieRequestValidator;
+        private readonly ICreateMovieRequestValidatorCollection _createMovieRequestValidator;
+        private readonly IUpdateMovieRequestValidatorCollection _updateMovieRequestValidator;
 
-        public MoviesController(IMovieService movieService, IMapper mapper, ICreateMovieRequestValidator createMovieRequestValidator, IUpdateMovieRequestValidator updateMovieRequestValidator)
+        public MoviesController(IMovieService movieService, IMapper mapper, ICreateMovieRequestValidatorCollection createMovieRequestValidator, IUpdateMovieRequestValidatorCollection updateMovieRequestValidator)
         {
             _mapper = mapper;
             _movieService = movieService;
@@ -141,7 +141,10 @@ namespace BlackSlope.Api.Operations.Movies
             _updateMovieRequestValidator.Validate(request);
 
             // id can be in URL, body, or both
-            viewModel.Id = id ?? viewModel.Id;
+            if (viewModel != null)
+            {
+                viewModel.Id = id ?? viewModel.Id;
+            }
 
             // map view model to domain model
             var movie = _mapper.Map<MovieDomainModel>(viewModel);

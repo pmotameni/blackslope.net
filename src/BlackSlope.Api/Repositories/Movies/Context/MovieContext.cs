@@ -27,13 +27,10 @@ namespace BlackSlope.Repositories.Movies.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<MovieDtoModel>(entity =>
-            {
-                entity.HasIndex(e => e.Title)
-                    .HasName("IX_Movies_Title");
-            });
+            modelBuilder?.Entity<MovieDtoModel>(entity => entity.HasIndex(e => e.Title)
+                    .HasName("IX_Movies_Title"));
 
-            modelBuilder.Seed();
+            modelBuilder?.Seed();
         }
     }
 

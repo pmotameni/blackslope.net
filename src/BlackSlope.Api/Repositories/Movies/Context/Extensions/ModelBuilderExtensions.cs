@@ -8,7 +8,7 @@ namespace BlackSlope.Api.Repositories.Movies.Context.Extensions
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<MovieDtoModel>().HasData(
+            modelBuilder?.Entity<MovieDtoModel>().HasData(
                 new MovieDtoModel { Id = 1, Title = "The Shawshank Redemption", Description = "Lorem ipsum dolor sit amet, ut consul soluta persius quo, et eam mundi scribentur, eros invidunt dissentias no eum.", ReleaseDate = DateTime.Now },
                 new MovieDtoModel { Id = 2, Title = "The Godfather", Description = "Eos dolor perpetua ne, cum agam causae petentium ei.", ReleaseDate = DateTime.Now },
                 new MovieDtoModel { Id = 3, Title = "The Dark Knight", Description = "At idque electram moderatius vix. Legere postulant at per.", ReleaseDate = DateTime.Now },

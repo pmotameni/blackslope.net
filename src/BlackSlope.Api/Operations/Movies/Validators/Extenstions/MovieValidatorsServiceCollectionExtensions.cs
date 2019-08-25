@@ -8,8 +8,8 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddMovieValidators(this IServiceCollection services)
         {
-            services.TryAddTransient<IUpdateMovieRequestValidator, UpdateMovieRequestValidatorCollection>();
-            services.TryAddTransient<ICreateMovieRequestValidator, CreateMovieRequestValidatorCollection>();
+            services.TryAddTransient<IUpdateMovieRequestValidatorCollection, UpdateMovieRequestValidatorCollection>();
+            services.TryAddTransient<ICreateMovieRequestValidatorCollection, CreateMovieRequestValidatorCollection>();
             return services;
         }
     }

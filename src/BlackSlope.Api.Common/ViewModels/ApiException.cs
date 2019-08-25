@@ -1,6 +1,6 @@
-﻿using BlackSlope.Api.Common.Enumerators;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using BlackSlope.Api.Common.Enumerators;
 
 namespace BlackSlope.Api.Common.ViewModels
 {

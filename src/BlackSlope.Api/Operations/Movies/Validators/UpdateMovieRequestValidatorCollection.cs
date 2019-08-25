@@ -7,9 +7,9 @@ using FluentValidation;
 
 namespace BlackSlope.Api.Operations.Movies.Validators
 {
-    public class UpdateMovieRequestValidator : BlackslopeValidator<UpdateMovieRequest>, IUpdateMovieRequestValidator
+    public class UpdateMovieRequestValidatorCollection : BlackslopeValidator<UpdateMovieRequest>, IUpdateMovieRequestValidator
     {
-        public UpdateMovieRequestValidator()
+        public UpdateMovieRequestValidatorCollection()
         {
             RuleFor(r => r.Movie)
                 .NotNull()
@@ -23,7 +23,7 @@ namespace BlackSlope.Api.Operations.Movies.Validators
                 .WithState(_ => MovieErrorCode.IdConflict);
             RuleFor(x => x.Id).Must((x, id) => HasAnId(id, x.Movie))
               .WithState(_ => MovieErrorCode.EmptyOrNullMovieId);
-            RuleFor(x => x.Movie).SetValidator(new UpdateMovieViewModelValidator());
+            RuleFor(x => x.Movie).SetValidator(new UpdateMovieViewModelValidatorCollection());
         }
 
         private bool HasAnId(int? id, MovieViewModel request)

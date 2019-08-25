@@ -6,12 +6,12 @@ using FluentValidation;
 
 namespace BlackSlope.Api.Operations.Movies.Validators
 {
-    public class CreateMovieViewModelValidator : BlackslopeValidator<CreateMovieViewModel>
+    public class CreateMovieViewModelValidatorCollection : BlackslopeValidator<CreateMovieViewModel>
     {
-        public CreateMovieViewModelValidator(IMovieService movieService)
+        public CreateMovieViewModelValidatorCollection(IMovieService movieService)
         {
             RuleFor(x => x).MustAsync(async (x, cancellationtoken) =>
-                    !(await movieService.CheckIfMovieExistsAsync(x.Title, x.ReleaseDate)))
+                    !await movieService.CheckIfMovieExistsAsync(x.Title, x.ReleaseDate))
                 .WithState(x => MovieErrorCode.MovieAlreadyExists);
 
             RuleFor(x => x.Title)

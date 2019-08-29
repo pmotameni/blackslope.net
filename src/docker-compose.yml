@@ -20,3 +20,6 @@ services:
       - "5010:80"
     environment:
       ASPNETCORE_ENVIRONMENT: "docker"
+  identityServer:
+      container_name: identityServer
+      

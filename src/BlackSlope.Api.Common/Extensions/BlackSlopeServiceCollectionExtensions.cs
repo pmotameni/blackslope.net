@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using AutoMapper;
+using BlackSlope.Api.Common.Configuration;
 using BlackSlope.Api.Common.Configurtion;
 using BlackSlope.Api.Common.Swagger;
 using Microsoft.AspNetCore.Authentication;
@@ -77,6 +78,24 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.Audience = azureAdConfig.Audience;
             });
 
+        /// <summary>
+        /// Add IdentityServer service to the Service Collection and configure it
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="identityServerConfig"></param>
+        /// <returns></returns>
+        public static AuthenticationBuilder AddIdentityServer(this IServiceCollection services, IdentityServerConfig identityServerConfig) =>
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.Authority = identityServerConfig.Tenant;
+                options.RequireHttpsMetadata = false;
+
+                options.Audience = identityServerConfig.Audience;
+            });
         /// <summary>
         /// Add AutoMapper service to the Service Collection and configure it
         /// </summary>

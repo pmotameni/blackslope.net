@@ -92,7 +92,7 @@ namespace Microsoft.Extensions.DependencyInjection
             .AddJwtBearer(options =>
             {
                 options.Authority = identityServerConfig.Tenant;
-                options.RequireHttpsMetadata = false;
+                //options.RequireHttpsMetadata = false;
 
                 options.Audience = identityServerConfig.Audience;
             });

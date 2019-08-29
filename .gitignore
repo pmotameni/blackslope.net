@@ -86,3 +86,4 @@ _[Ss]cripts
 
 publish/
 .vscode
+/src/.idea

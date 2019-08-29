@@ -20,6 +20,15 @@ services:
       - "5010:80"
     environment:
       ASPNETCORE_ENVIRONMENT: "docker"
-  identityServer:
-      container_name: identityServer
-      
+  identityserver:
+    container_name: identityserver
+    image: blackslope/identity-server
+    build: 
+      context: 
+    depends_on:./BlackSlope.IdentityProvider
+      - apiapp
+    ports: 
+      - "5020:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "docker"
+    

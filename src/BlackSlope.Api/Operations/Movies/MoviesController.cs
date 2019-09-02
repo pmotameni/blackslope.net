@@ -31,14 +31,14 @@ namespace BlackSlope.Api.Operations.Movies
         }
 
         /// <summary>
-        /// Return a list of all movies
+        /// Return a list of all movies.
         /// </summary>
         /// <remarks>
-        /// Use this operation to return a list of all movies
+        /// Use this operation to return a list of all movies.
         /// </remarks>
-        /// <response code="200">Returns a list of all movies</response>
-        /// <response code="401">Unauthorized</response>
-        /// <response code="500">Internal Server Error</response>  
+        /// <response code="200">Returns a list of all movies.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">Internal Server Error.</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -60,11 +60,11 @@ namespace BlackSlope.Api.Operations.Movies
         /// Return a single movies
         /// </summary>
         /// <remarks>
-        /// Use this operation to return a single movies
+        /// Use this operation to return a single movies.
         /// </remarks>
-        /// <response code="200">Returns a movie</response>
-        /// <response code="401">Unauthorized</response>
-        /// <response code="500">Internal Server Error</response>     
+        /// <response code="200">Returns a movie.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">Internal Server Error.</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -169,7 +169,6 @@ namespace BlackSlope.Api.Operations.Movies
         /// <response code="400">Bad Request</response>
         /// <response code="401">Unauthorized</response>
         /// <response code="500">Internal Server Error</response>
-        /// 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

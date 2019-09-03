@@ -20,15 +20,18 @@ services:
       - "5010:80"
     environment:
       ASPNETCORE_ENVIRONMENT: "docker"
-  identityserver:
-    container_name: identityserver
-    image: blackslope/identity-server
-    build: 
-      context: 
-    depends_on:./BlackSlope.IdentityProvider
-      - apiapp
-    ports: 
-      - "5020:80"
-    environment:
-      ASPNETCORE_ENVIRONMENT: "docker"
+  # TODO: Figure out why Docker won't build on my machine
+  # identityserver:
+  #   container_name: identityserver
+  #   image: blackslope/identity-server
+  #   build: 
+  #     context: ./BlackSlope.IdentityProvider
+  #   depends_on:
+  #     - apiapp
+  #   ports: 
+  #     - "5020:80"
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: "docker"
+  #     TENANT_ID: "api1"
+  #     HOST_NAME: "http://localhost:5000"
     

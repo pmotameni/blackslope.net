@@ -46,6 +46,7 @@ namespace IdentityServerAspNetIdentity
                 iis.AutomaticAuthentication = false;
             });
 
+            // TODO: Configure SSL
             var builder = services.AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;

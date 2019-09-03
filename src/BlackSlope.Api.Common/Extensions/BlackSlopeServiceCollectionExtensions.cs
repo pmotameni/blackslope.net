@@ -6,8 +6,10 @@ using AutoMapper;
 using BlackSlope.Api.Common.Configuration;
 using BlackSlope.Api.Common.Configurtion;
 using BlackSlope.Api.Common.Swagger;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
@@ -85,16 +87,19 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="identityServerConfig"></param>
         /// <returns></returns>
         public static AuthenticationBuilder AddIdentityServer(this IServiceCollection services, IdentityServerConfig identityServerConfig) =>
-            services.AddAuthentication(options =>
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            .AddIdentityServerAuthentication(options =>
             {
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.Authority = identityServerConfig.Tenant;
-                //options.RequireHttpsMetadata = false;
+                // TODO: Configure SSL
+                options.Authority = identityServerConfig.Audience;
+                options.ApiName = identityServerConfig.Tenant;
 
-                options.Audience = identityServerConfig.Audience;
+
+                // http://docs.identityserver.io/en/latest/topics/apis.html
+                options.RequireHttpsMetadata = false;
+                options.ApiSecret = "secret";
+                options.EnableCaching = true;
+                options.CacheDuration = TimeSpan.FromMinutes(10);
             });
         /// <summary>
         /// Add AutoMapper service to the Service Collection and configure it

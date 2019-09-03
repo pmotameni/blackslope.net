@@ -8,13 +8,14 @@ using BlackSlope.Api.Operations.Movies.Validators.Interfaces;
 using BlackSlope.Api.Operations.Movies.ViewModels;
 using BlackSlope.Services.Movies;
 using BlackSlope.Services.Movies.DomainModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlackSlope.Api.Operations.Movies
 {
     // TODO: enable this once authentication middleware has been configured
-    //[Authorize]
+    [Authorize]
     public class MoviesController : BaseController
     {
         private readonly IMapper _mapper;

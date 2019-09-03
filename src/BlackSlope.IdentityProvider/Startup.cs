@@ -79,6 +79,10 @@ namespace IdentityServerAspNetIdentity
             }
             else
             {
+                // How to Self sign Cert
+                // https://www.teilin.net/2018/07/05/self-signed-certificate-and-configuring-identityserver-4-with-certificate/
+                // TODO: Add in support for HTTPS
+                // https://mcguirev10.com/2018/01/05/https-identityserver-aspnetcore.html
                 throw new Exception("need to configure key material");
             }
 
